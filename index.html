@@ -1,0 +1,719 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sistema Gestão Take Away</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gradient-to-br from-blue-50 to-indigo-100 min-h-screen">
+  <div class="container mx-auto px-4 py-8">
+    <!-- Header -->
+    <div class="text-center mb-8">
+      <h1 class="text-3xl md:text-4xl font-bold text-gray-800 mb-2">Sistema de Gestão de Fluxo de Caixa</h1>
+      <p class="text-gray-600 text-sm md:text-base">Sistema de Gestão Completo</p>
+    </div>
+
+    <!-- Navigation -->
+    <div class="flex justify-center mb-8">
+        <div class="bg-white rounded-lg shadow-lg p-2 flex flex-wrap gap-2 justify-center w-full max-w-2xl">
+            <button onclick="showSection('stock')" id="btn-stock"
+                class="flex-1 min-w-[120px] px-4 py-2 rounded-md bg-blue-500 text-white font-medium transition-colors text-sm md:text-base">
+                📦 Estoque
+            </button>
+            <button onclick="showSection('compras')" id="btn-compras"
+                class="flex-1 min-w-[120px] px-4 py-2 rounded-md text-gray-600 hover:bg-gray-100 font-medium transition-colors text-sm md:text-base">
+                🛒 Compras
+            </button>
+            <button onclick="showSection('vendas')" id="btn-vendas"
+                class="flex-1 min-w-[120px] px-4 py-2 rounded-md text-gray-600 hover:bg-gray-100 font-medium transition-colors text-sm md:text-base">
+                💰 Vendas
+            </button>
+            <button onclick="showSection('relatorios')" id="btn-relatorios"
+                class="flex-1 min-w-[120px] px-4 py-2 rounded-md text-gray-600 hover:bg-gray-100 font-medium transition-colors text-sm md:text-base">
+                📊 Relatórios
+            </button>
+        </div>
+    </div>
+
+    <!-- Stock Section -->
+   <div id="section-stock" class="section">
+      <div class="bg-white rounded-lg shadow-lg p-6 mb-6">
+        <div class="flex justify-between items-center mb-4">
+          <h2 class="text-2xl font-bold text-gray-800">📦 Gestão de Estoque</h2>
+          <button onclick="printSection('section-stock')" 
+                  class="px-3 py-1 bg-blue-600 text-white rounded-md text-sm hover:bg-blue-700">
+            🖨️ Imprimir Estoque
+          </button>
+        </div>
+        
+        <!-- Cards -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mb-6">
+          <div class="bg-green-50 p-4 rounded-lg border border-green-200">
+            <h3 class="font-semibold text-green-800">Total Produtos</h3>
+            <p class="text-2xl font-bold text-green-600" id="total-produtos">0</p>
+          </div>
+          <div class="bg-yellow-50 p-4 rounded-lg border border-yellow-200">
+            <h3 class="font-semibold text-yellow-800">Estoque Baixo</h3>
+            <p class="text-2xl font-bold text-yellow-600" id="stock-baixo">0</p>
+          </div>
+          <div class="bg-red-50 p-4 rounded-lg border border-red-200">
+            <h3 class="font-semibold text-red-800">Sem Estoque</h3>
+            <p class="text-2xl font-bold text-red-600" id="sem-stock">0</p>
+          </div>
+        </div>
+
+        <!-- Table -->
+        <div class="overflow-x-auto">
+          <table class="w-full border-collapse text-sm md:text-base">
+            <thead>
+              <tr class="bg-gray-50">
+                <th class="border border-gray-200 px-4 py-2 text-left">Produto</th>
+                <th class="border border-gray-200 px-4 py-2 text-left">Quantidade</th>
+                <th class="border border-gray-200 px-4 py-2 text-left">Preço Unitário</th>
+                <th class="border border-gray-200 px-4 py-2 text-left">Entradas</th>
+                <th class="border border-gray-200 px-4 py-2 text-left">Saídas</th>
+                <th class="border border-gray-200 px-4 py-2 text-left">Lucro</th>
+                <th class="border border-gray-200 px-4 py-2 text-left">Status</th>
+              </tr>
+            </thead>
+            <tbody id="stock-table">
+              <tr>
+                <td colspan="7" class="border border-gray-200 px-4 py-8 text-center text-gray-500">
+                  Nenhum produto em stock. Adicione produtos através das compras.
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+        <!-- Compras Section -->
+        <div id="section-compras" class="section hidden">
+            <div class="bg-white rounded-lg shadow-lg p-6 mb-6">
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">🛒 Registar Compra</h2>
+                
+                <form id="form-compra" class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Nome do Produto</label>
+                        <input type="text" id="produto-nome" required class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Ex: Pizza Margherita">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Quantidade</label>
+                        <input type="number" id="produto-quantidade" required min="1" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Ex: 10">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Preço Unitário (MZN)</label>
+                        <input type="number" id="produto-preco" required min="0" step="0.01" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Ex: 250.00">
+                    </div>
+
+                    <div>
+                        <button type="submit" class="bg-green-500 hover:bg-green-600 text-white px-6 py-2 rounded-md font-medium transition-colors">
+                            ✅ Registar Compra
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="bg-white rounded-lg shadow-lg p-6">
+                <h3 class="text-xl font-bold text-gray-800 mb-4">Histórico de Compras</h3>
+                <div class="overflow-x-auto">
+                    <table class="w-full border-collapse">
+                        <thead>
+                            <tr class="bg-gray-50">
+                                <th class="border border-gray-200 px-4 py-2 text-left">Data</th>
+                                <th class="border border-gray-200 px-4 py-2 text-left">Ingredientes</th>
+                                <th class="border border-gray-200 px-4 py-2 text-left">Custo</th>
+                                <th class="border border-gray-200 px-4 py-2 text-left">Preço Venda</th>
+                                <th class="border border-gray-200 px-4 py-2 text-left">Lucro</th>
+                            </tr>
+                        </thead>
+                        <tbody id="compras-table">
+                            <tr>
+                                <td colspan="5" class="border border-gray-200 px-4 py-8 text-center text-gray-500">
+                                    Nenhuma compra registada ainda.
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Vendas Section -->
+        <div id="section-vendas" class="section hidden">
+            <div class="bg-white rounded-lg shadow-lg p-6 mb-6">
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">🍔 Registar Venda de Hambúrguer</h2>
+                
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <!-- Seleção de Ingredientes -->
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-700 mb-4">Selecionar Ingredientes</h3>
+                        <div class="space-y-3">
+                            <div class="flex items-center justify-between">
+                                <label class="block text-sm font-medium text-gray-700">Produto</label>
+                                <select id="ingrediente-select" class="w-2/3 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                    <option value="">Selecione um ingrediente</option>
+                                </select>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <label class="block text-sm font-medium text-gray-700">Quantidade</label>
+                                <input type="number" id="ingrediente-quantidade" min="1" class="w-1/3 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="1">
+                            </div>
+                            <button type="button" onclick="adicionarIngrediente()" class="w-full bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-md font-medium transition-colors">
+                                ➕ Adicionar Ingrediente
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Lista de Ingredientes Selecionados -->
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-700 mb-4">Ingredientes do Hambúrguer</h3>
+                        <div id="ingredientes-lista" class="space-y-2 mb-4 max-h-64 overflow-y-auto">
+                            <p class="text-gray-500 text-center py-8">Nenhum ingrediente adicionado</p>
+                        </div>
+                        <div class="border-t pt-4">
+                            <div class="flex justify-between items-center mb-2">
+                                <span class="font-medium">Custo Total:</span>
+                                <span class="font-bold text-lg" id="custo-total">0.00 MZN</span>
+                            </div>
+                            <div class="flex justify-between items-center mb-4">
+                                <label class="font-medium">Preço de Venda:</label>
+                                <input type="number" id="preco-venda" min="0" step="0.01" class="w-32 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="0.00">
+                            </div>
+                            <div class="flex justify-between items-center mb-4">
+                                <span class="font-medium">Lucro:</span>
+                                <span class="font-bold text-lg" id="lucro-hamburguer">0.00 MZN</span>
+                            </div>
+                            <button onclick="finalizarVenda()" class="w-full bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded-md font-medium transition-colors">
+                                💰 Finalizar Venda
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-lg shadow-lg p-6">
+                <h3 class="text-xl font-bold text-gray-800 mb-4">Histórico de Vendas</h3>
+                <div class="overflow-x-auto">
+                    <table class="w-full border-collapse">
+                        <thead>
+                            <tr class="bg-gray-50">
+                                <th class="border border-gray-200 px-4 py-2 text-left">Data</th>
+                                <th class="border border-gray-200 px-4 py-2 text-left">Ingredientes</th>
+                                <th class="border border-gray-200 px-4 py-2 text-left">Custo</th>
+                                <th class="border border-gray-200 px-4 py-2 text-left">Preço Venda</th>
+                                <th class="border border-gray-200 px-4 py-2 text-left">Lucro</th>
+                            </tr>
+                        </thead>
+                        <tbody id="vendas-table">
+                            <tr>
+                                <td colspan="5" class="border border-gray-200 px-4 py-8 text-center text-gray-500">
+                                    Nenhuma venda registada ainda.
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Relatórios Section -->
+        <div id="section-relatorios" class="section hidden">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                <div class="bg-white rounded-lg shadow-lg p-6">
+                    <h3 class="text-xl font-bold text-gray-800 mb-4">💰 Resumo Financeiro</h3>
+                    <div class="space-y-3">
+                        <div class="flex justify-between">
+                            <span class="text-gray-600">Total Compras:</span>
+                            <span class="font-bold text-red-600" id="total-compras">0.00 MZN</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-600">Total Vendas:</span>
+                            <span class="font-bold text-green-600" id="total-vendas">0.00 MZN</span>
+                        </div>
+                        <hr>
+                        <div class="flex justify-between text-lg">
+                            <span class="font-semibold">Lucro:</span>
+                            <span class="font-bold" id="lucro-total">0.00 MZN</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-lg shadow-lg p-6">
+                    <h3 class="text-xl font-bold text-gray-800 mb-4">📊 Estatísticas</h3>
+                    <div class="space-y-3">
+                        <div class="flex justify-between">
+                            <span class="text-gray-600">Produtos Diferentes:</span>
+                            <span class="font-bold" id="produtos-diferentes">0</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-600">Total Compras:</span>
+                            <span class="font-bold" id="num-compras">0</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-600">Total Vendas:</span>
+                            <span class="font-bold" id="num-vendas">0</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-lg shadow-lg p-6">
+                <h3 class="text-xl font-bold text-gray-800 mb-4">🏆 Produtos Mais Vendidos</h3>
+                <div id="produtos-populares" class="space-y-2">
+                    <p class="text-gray-500 text-center py-4">Nenhuma venda registada ainda.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Data storage
+        let stock = {};
+        let compras = [];
+        let vendas = [];
+        let ingredientesSelecionados = [];
+
+        // Load data from localStorage
+        function loadData() {
+            const savedStock = localStorage.getItem('takeaway-stock');
+            const savedCompras = localStorage.getItem('takeaway-compras');
+            const savedVendas = localStorage.getItem('takeaway-vendas');
+            
+            if (savedStock) stock = JSON.parse(savedStock);
+            if (savedCompras) compras = JSON.parse(savedCompras);
+            if (savedVendas) vendas = JSON.parse(savedVendas);
+        }
+
+        // Save data to localStorage
+        function saveData() {
+            localStorage.setItem('takeaway-stock', JSON.stringify(stock));
+            localStorage.setItem('takeaway-compras', JSON.stringify(compras));
+            localStorage.setItem('takeaway-vendas', JSON.stringify(vendas));
+        }
+
+        // Navigation
+        function showSection(sectionName) {
+            // Hide all sections
+            document.querySelectorAll('.section').forEach(section => {
+                section.classList.add('hidden');
+            });
+            
+            // Remove active class from all buttons
+            document.querySelectorAll('[id^="btn-"]').forEach(btn => {
+                btn.className = 'px-6 py-2 rounded-md text-gray-600 hover:bg-gray-100 font-medium transition-colors';
+            });
+            
+            // Show selected section
+            document.getElementById(`section-${sectionName}`).classList.remove('hidden');
+            
+            // Add active class to selected button
+            document.getElementById(`btn-${sectionName}`).className = 'px-6 py-2 rounded-md bg-blue-500 text-white font-medium transition-colors';
+            
+            // Update displays
+            updateStockDisplay();
+            updateIngredienteSelect();
+            updateRelatorios();
+        }
+
+        // Handle compra form
+        document.getElementById('form-compra').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const nome = document.getElementById('produto-nome').value;
+            const quantidade = parseInt(document.getElementById('produto-quantidade').value);
+            const preco = parseFloat(document.getElementById('produto-preco').value);
+            
+            // Add to compras history
+            const compra = {
+                id: Date.now(),
+                data: new Date().toLocaleDateString('pt-PT'),
+                nome,
+                quantidade,
+                preco,
+                total: quantidade * preco
+            };
+            compras.push(compra);
+            
+            // Update stock
+            if (stock[nome]) {
+                stock[nome].quantidade += quantidade;
+                stock[nome].entradas += quantidade;
+                stock[nome].preco = preco;
+            } else {
+                stock[nome] = {
+                    quantidade,
+                    preco,
+                    entradas: quantidade,
+                    saidas: 0
+                };
+            }
+            
+            saveData();
+            updateComprasTable();
+            updateStockDisplay();
+            updateIngredienteSelect();
+            
+            // Reset form
+            this.reset();
+            
+            alert('Compra registada com sucesso!');
+        });
+
+        // Adicionar ingrediente ao hambúrguer
+        function adicionarIngrediente() {
+            const select = document.getElementById('ingrediente-select');
+            const quantidadeInput = document.getElementById('ingrediente-quantidade');
+            
+            const produtoNome = select.value;
+            const quantidade = parseInt(quantidadeInput.value) || 1;
+            
+            if (!produtoNome) {
+                alert('Selecione um ingrediente!');
+                return;
+            }
+            
+            if (!stock[produtoNome] || stock[produtoNome].quantidade < quantidade) {
+                alert('Stock insuficiente!');
+                return;
+            }
+            
+            // Verificar se já existe o ingrediente
+            const existingIndex = ingredientesSelecionados.findIndex(item => item.nome === produtoNome);
+            if (existingIndex >= 0) {
+                ingredientesSelecionados[existingIndex].quantidade += quantidade;
+            } else {
+                ingredientesSelecionados.push({
+                    nome: produtoNome,
+                    quantidade: quantidade,
+                    preco: stock[produtoNome].preco
+                });
+            }
+            
+            updateIngredientesLista();
+            updateCustoTotal();
+            
+            // Reset inputs
+            select.value = '';
+            quantidadeInput.value = '';
+        }
+
+        // Remover ingrediente
+        function removerIngrediente(index) {
+            ingredientesSelecionados.splice(index, 1);
+            updateIngredientesLista();
+            updateCustoTotal();
+        }
+
+        // Atualizar lista de ingredientes
+        function updateIngredientesLista() {
+            const lista = document.getElementById('ingredientes-lista');
+            
+            if (ingredientesSelecionados.length === 0) {
+                lista.innerHTML = '<p class="text-gray-500 text-center py-8">Nenhum ingrediente adicionado</p>';
+                return;
+            }
+            
+            const html = ingredientesSelecionados.map((item, index) => `
+                <div class="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
+                    <div>
+                        <span class="font-medium">${item.nome}</span>
+                        <span class="text-gray-600 ml-2">x${item.quantidade}</span>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <span class="font-bold">${(item.quantidade * item.preco).toFixed(2)} MZN</span>
+                        <button onclick="removerIngrediente(${index})" class="text-red-500 hover:text-red-700">
+                            ❌
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+            
+            lista.innerHTML = html;
+        }
+
+        // Atualizar custo total
+        function updateCustoTotal() {
+            const custoTotal = ingredientesSelecionados.reduce((sum, item) => sum + (item.quantidade * item.preco), 0);
+            document.getElementById('custo-total').textContent = `${custoTotal.toFixed(2)} MZN`;
+            
+            // Atualizar lucro
+            const precoVenda = parseFloat(document.getElementById('preco-venda').value) || 0;
+            const lucro = precoVenda - custoTotal;
+            const lucroEl = document.getElementById('lucro-hamburguer');
+            lucroEl.textContent = `${lucro.toFixed(2)} MZN`;
+            lucroEl.className = lucro >= 0 ? 'font-bold text-lg text-green-600' : 'font-bold text-lg text-red-600';
+        }
+
+        // Atualizar lucro quando preço de venda muda
+        document.getElementById('preco-venda').addEventListener('input', updateCustoTotal);
+
+        // Finalizar venda
+        function finalizarVenda() {
+            if (ingredientesSelecionados.length === 0) {
+                alert('Adicione pelo menos um ingrediente!');
+                return;
+            }
+            
+            const precoVenda = parseFloat(document.getElementById('preco-venda').value);
+            if (!precoVenda || precoVenda <= 0) {
+                alert('Defina um preço de venda válido!');
+                return;
+            }
+            
+            // Verificar stock disponível
+            for (let item of ingredientesSelecionados) {
+                if (!stock[item.nome] || stock[item.nome].quantidade < item.quantidade) {
+                    alert(`Stock insuficiente para ${item.nome}!`);
+                    return;
+                }
+            }
+            
+            const custoTotal = ingredientesSelecionados.reduce((sum, item) => sum + (item.quantidade * item.preco), 0);
+            const lucro = precoVenda - custoTotal;
+            
+            // Registar venda
+            const venda = {
+                id: Date.now(),
+                data: new Date().toLocaleDateString('pt-PT'),
+                ingredientes: [...ingredientesSelecionados],
+                custo: custoTotal,
+                precoVenda: precoVenda,
+                lucro: lucro
+            };
+            vendas.push(venda);
+            
+            // Atualizar stock
+            ingredientesSelecionados.forEach(item => {
+                stock[item.nome].quantidade -= item.quantidade;
+                stock[item.nome].saidas += item.quantidade;
+            });
+            
+            saveData();
+            updateVendasTable();
+            updateStockDisplay();
+            updateIngredienteSelect();
+            
+            // Reset
+            ingredientesSelecionados = [];
+            updateIngredientesLista();
+            updateCustoTotal();
+            document.getElementById('preco-venda').value = '';
+            
+            alert('Venda registada com sucesso!');
+        }
+
+        // Update displays
+        function updateStockDisplay() {
+            const stockTable = document.getElementById('stock-table');
+            const totalProdutos = document.getElementById('total-produtos');
+            const stockBaixo = document.getElementById('stock-baixo');
+            const semStock = document.getElementById('sem-stock');
+            
+            if (Object.keys(stock).length === 0) {
+                stockTable.innerHTML = `
+                    <tr>
+                        <td colspan="7" class="border border-gray-200 px-4 py-8 text-center text-gray-500">
+                            Nenhum produto em stock. Adicione produtos através das compras.
+                        </td>
+                    </tr>
+                `;
+                totalProdutos.textContent = '0';
+                stockBaixo.textContent = '0';
+                semStock.textContent = '0';
+                return;
+            }
+            
+            let html = '';
+            let baixo = 0;
+            let sem = 0;
+            
+            Object.entries(stock).forEach(([nome, dados]) => {
+                let statusClass = 'bg-green-100 text-green-800';
+                let statusText = 'Em Stock';
+                
+                if (dados.quantidade === 0) {
+                    statusClass = 'bg-red-100 text-red-800';
+                    statusText = 'Sem Stock';
+                    sem++;
+                } else if (dados.quantidade <= 5) {
+                    statusClass = 'bg-yellow-100 text-yellow-800';
+                    statusText = 'Stock Baixo';
+                    baixo++;
+                }
+                
+                const lucroUnitario = dados.preco * 0.3; // Assumindo 30% de margem
+                const lucroTotal = (dados.saidas || 0) * lucroUnitario;
+                
+                html += `
+                    <tr>
+                        <td class="border border-gray-200 px-4 py-2 font-medium">${nome}</td>
+                        <td class="border border-gray-200 px-4 py-2">${dados.quantidade}</td>
+                        <td class="border border-gray-200 px-4 py-2">${dados.preco.toFixed(2)} MZN</td>
+                        <td class="border border-gray-200 px-4 py-2">${dados.entradas || 0}</td>
+                        <td class="border border-gray-200 px-4 py-2">${dados.saidas || 0}</td>
+                        <td class="border border-gray-200 px-4 py-2 font-bold text-green-600">${lucroTotal.toFixed(2)} MZN</td>
+                        <td class="border border-gray-200 px-4 py-2">
+                            <span class="px-2 py-1 rounded-full text-xs font-medium ${statusClass}">
+                                ${statusText}
+                            </span>
+                        </td>
+                    </tr>
+                `;
+            });
+            
+            stockTable.innerHTML = html;
+            totalProdutos.textContent = Object.keys(stock).length;
+            stockBaixo.textContent = baixo;
+            semStock.textContent = sem;
+        }
+
+        function updateComprasTable() {
+            const comprasTable = document.getElementById('compras-table');
+            
+            if (compras.length === 0) {
+                comprasTable.innerHTML = `
+                    <tr>
+                        <td colspan="5" class="border border-gray-200 px-4 py-8 text-center text-gray-500">
+                            Nenhuma compra registada ainda.
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+            
+            const html = compras.slice().reverse().map(compra => `
+                <tr>
+                    <td class="border border-gray-200 px-4 py-2">${compra.data}</td>
+                    <td class="border border-gray-200 px-4 py-2 font-medium">${compra.nome}</td>
+                    <td class="border border-gray-200 px-4 py-2">${compra.quantidade}</td>
+                    <td class="border border-gray-200 px-4 py-2">${compra.preco.toFixed(2)} MZN</td>
+                    <td class="border border-gray-200 px-4 py-2 font-bold">${compra.total.toFixed(2)} MZN</td>
+                </tr>
+            `).join('');
+            
+            comprasTable.innerHTML = html;
+        }
+
+        function updateVendasTable() {
+            const vendasTable = document.getElementById('vendas-table');
+            
+            if (vendas.length === 0) {
+                vendasTable.innerHTML = `
+                    <tr>
+                        <td colspan="5" class="border border-gray-200 px-4 py-8 text-center text-gray-500">
+                            Nenhuma venda registada ainda.
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+            
+            const html = vendas.slice().reverse().map(venda => `
+                <tr>
+                    <td class="border border-gray-200 px-4 py-2">${venda.data}</td>
+                    <td class="border border-gray-200 px-4 py-2">
+                        ${venda.ingredientes.map(ing => `${ing.nome} (${ing.quantidade})`).join(', ')}
+                    </td>
+                    <td class="border border-gray-200 px-4 py-2">${venda.custo.toFixed(2)} MZN</td>
+                    <td class="border border-gray-200 px-4 py-2 font-bold">${venda.precoVenda.toFixed(2)} MZN</td>
+                    <td class="border border-gray-200 px-4 py-2 font-bold ${venda.lucro >= 0 ? 'text-green-600' : 'text-red-600'}">
+                        ${venda.lucro.toFixed(2)} MZN
+                    </td>
+                </tr>
+            `).join('');
+            
+            vendasTable.innerHTML = html;
+        }
+
+        function updateIngredienteSelect() {
+            const select = document.getElementById('ingrediente-select');
+            const currentValue = select.value;
+            
+            select.innerHTML = '<option value="">Selecione um ingrediente</option>';
+            
+            Object.entries(stock).forEach(([nome, dados]) => {
+                if (dados.quantidade > 0) {
+                    const option = document.createElement('option');
+                    option.value = nome;
+                    option.textContent = `${nome} (${dados.quantidade} disponível)`;
+                    select.appendChild(option);
+                }
+            });
+            
+            // Restore selection if still valid
+            if (currentValue && stock[currentValue] && stock[currentValue].quantidade > 0) {
+                select.value = currentValue;
+            }
+        }
+
+        function updateRelatorios() {
+            const totalComprasEl = document.getElementById('total-compras');
+            const totalVendasEl = document.getElementById('total-vendas');
+            const lucroTotalEl = document.getElementById('lucro-total');
+            const produtosDiferentesEl = document.getElementById('produtos-diferentes');
+            const numComprasEl = document.getElementById('num-compras');
+            const numVendasEl = document.getElementById('num-vendas');
+            const produtosPopularesEl = document.getElementById('produtos-populares');
+            
+            const totalCompras = compras.reduce((sum, compra) => sum + compra.total, 0);
+            const totalVendas = vendas.reduce((sum, venda) => sum + venda.precoVenda, 0);
+            const lucro = vendas.reduce((sum, venda) => sum + venda.lucro, 0);
+            
+            totalComprasEl.textContent = `${totalCompras.toFixed(2)} MZN`;
+            totalVendasEl.textContent = `${totalVendas.toFixed(2)} MZN`;
+            lucroTotalEl.textContent = `${lucro.toFixed(2)} MZN`;
+            lucroTotalEl.className = lucro >= 0 ? 'font-bold text-green-600' : 'font-bold text-red-600';
+            
+            produtosDiferentesEl.textContent = Object.keys(stock).length;
+            numComprasEl.textContent = compras.length;
+            numVendasEl.textContent = vendas.length;
+            
+            // Ingredientes mais usados
+            const ingredientesUsados = {};
+            vendas.forEach(venda => {
+                venda.ingredientes.forEach(ing => {
+                    if (!ingredientesUsados[ing.nome]) {
+                        ingredientesUsados[ing.nome] = 0;
+                    }
+                    ingredientesUsados[ing.nome] += ing.quantidade;
+                });
+            });
+            
+            const ingredientesOrdenados = Object.entries(ingredientesUsados)
+                .sort(([,a], [,b]) => b - a)
+                .slice(0, 5);
+            
+            if (ingredientesOrdenados.length === 0) {
+                produtosPopularesEl.innerHTML = '<p class="text-gray-500 text-center py-4">Nenhuma venda registada ainda.</p>';
+            } else {
+                const html = ingredientesOrdenados.map(([nome, quantidade], index) => `
+                    <div class="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
+                        <div class="flex items-center space-x-3">
+                            <span class="w-6 h-6 bg-blue-500 text-white rounded-full flex items-center justify-center text-sm font-bold">
+                                ${index + 1}
+                            </span>
+                            <span class="font-medium">${nome}</span>
+                        </div>
+                        <span class="text-blue-600 font-bold">${quantidade} usados</span>
+                    </div>
+                `).join('');
+                produtosPopularesEl.innerHTML = html;
+            }
+        }
+
+        // Initialize
+        loadData();
+        updateStockDisplay();
+        updateComprasTable();
+        updateVendasTable();
+        updateIngredienteSelect();
+        updateRelatorios();
+
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9820b773a1e173f8',t:'MTc1ODM2NDk1MS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+
+</html>
