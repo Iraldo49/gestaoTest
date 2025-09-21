@@ -41,11 +41,11 @@
    <div id="section-stock" class="section">
       <div class="bg-white rounded-lg shadow-lg p-6 mb-6">
         <div class="flex justify-between items-center mb-4">
-          <h2 class="text-2xl font-bold text-gray-800">📦 Gestão de Estoque</h2>
-          <button onclick="printSection('section-stock')" 
+          <h2 class="text-2xl font-bold text-gray-800">📦 Gestão de Stock</h2>
+          <!-- <button onclick="printSection('section-stock')" 
                   class="px-3 py-1 bg-blue-600 text-white rounded-md text-sm hover:bg-blue-700">
             🖨️ Imprimir Estoque
-          </button>
+          </button> -->
         </div>
         
         <!-- Cards -->
@@ -55,11 +55,11 @@
             <p class="text-2xl font-bold text-green-600" id="total-produtos">0</p>
           </div>
           <div class="bg-yellow-50 p-4 rounded-lg border border-yellow-200">
-            <h3 class="font-semibold text-yellow-800">Estoque Baixo</h3>
+            <h3 class="font-semibold text-yellow-800">Stock Baixo</h3>
             <p class="text-2xl font-bold text-yellow-600" id="stock-baixo">0</p>
           </div>
           <div class="bg-red-50 p-4 rounded-lg border border-red-200">
-            <h3 class="font-semibold text-red-800">Sem Estoque</h3>
+            <h3 class="font-semibold text-red-800">Sem Stock</h3>
             <p class="text-2xl font-bold text-red-600" id="sem-stock">0</p>
           </div>
         </div>
@@ -76,6 +76,7 @@
                 <th class="border border-gray-200 px-4 py-2 text-left">Saídas</th>
                 <th class="border border-gray-200 px-4 py-2 text-left">Lucro</th>
                 <th class="border border-gray-200 px-4 py-2 text-left">Status</th>
+                <th class="border border-gray-200 px-4 py-2 text-center">Ações</th>
               </tr>
             </thead>
             <tbody id="stock-table">
@@ -568,68 +569,86 @@ document.getElementById('form-compra').addEventListener('submit', function(e) {
 
         // Update displays
         function updateStockDisplay() {
-            const stockTable = document.getElementById('stock-table');
-            const totalProdutos = document.getElementById('total-produtos');
-            const stockBaixo = document.getElementById('stock-baixo');
-            const semStock = document.getElementById('sem-stock');
-            
-            if (Object.keys(stock).length === 0) {
-                stockTable.innerHTML = `
-                    <tr>
-                        <td colspan="7" class="border border-gray-200 px-4 py-8 text-center text-gray-500">
-                            Nenhum produto em stock. Adicione produtos através das compras.
-                        </td>
-                    </tr>
-                `;
-                totalProdutos.textContent = '0';
-                stockBaixo.textContent = '0';
-                semStock.textContent = '0';
-                return;
-            }
-            
-            let html = '';
-            let baixo = 0;
-            let sem = 0;
-            
-            Object.entries(stock).forEach(([nome, dados]) => {
-                let statusClass = 'bg-green-100 text-green-800';
-                let statusText = 'Em Stock';
-                
-                if (dados.quantidade === 0) {
-                    statusClass = 'bg-red-100 text-red-800';
-                    statusText = 'Sem Stock';
-                    sem++;
-                } else if (dados.quantidade <= 5) {
-                    statusClass = 'bg-yellow-100 text-yellow-800';
-                    statusText = 'Stock Baixo';
-                    baixo++;
-                }
-                
-                const lucroUnitario = dados.preco * 0.3; // Assumindo 30% de margem
-                const lucroTotal = (dados.saidas || 0) * lucroUnitario;
-                
-                html += `
-                    <tr>
-                        <td class="border border-gray-200 px-4 py-2 font-medium">${nome}</td>
-                        <td class="border border-gray-200 px-4 py-2">${dados.quantidade}</td>
-                        <td class="border border-gray-200 px-4 py-2">${dados.preco.toFixed(2)} MZN</td>
-                        <td class="border border-gray-200 px-4 py-2">${dados.entradas || 0}</td>
-                        <td class="border border-gray-200 px-4 py-2">${dados.saidas || 0}</td>
-                        <td class="border border-gray-200 px-4 py-2 font-bold text-green-600">${lucroTotal.toFixed(2)} MZN</td>
-                        <td class="border border-gray-200 px-4 py-2">
-                            <span class="px-2 py-1 rounded-full text-xs font-medium ${statusClass}">
-                                ${statusText}
-                            </span>
-                        </td>
-                    </tr>
-                `;
-            });
-            
-            stockTable.innerHTML = html;
-            totalProdutos.textContent = Object.keys(stock).length;
-            stockBaixo.textContent = baixo;
-            semStock.textContent = sem;
+    const stockTable = document.getElementById('stock-table');
+    const totalProdutos = document.getElementById('total-produtos');
+    const stockBaixo = document.getElementById('stock-baixo');
+    const semStock = document.getElementById('sem-stock');
+    
+    if (Object.keys(stock).length === 0) {
+        stockTable.innerHTML = `
+            <tr>
+                <td colspan="8" class="border border-gray-200 px-4 py-8 text-center text-gray-500">
+                    Nenhum produto em stock. Adicione produtos através das compras.
+                </td>
+            </tr>
+        `;
+        totalProdutos.textContent = '0';
+        stockBaixo.textContent = '0';
+        semStock.textContent = '0';
+        return;
+    }
+    
+    let html = '';
+    let baixo = 0;
+    let sem = 0;
+    
+    Object.entries(stock).forEach(([nome, dados]) => {
+        let statusClass = 'bg-green-100 text-green-800';
+        let statusText = 'Em Stock';
+        
+        if (dados.quantidade === 0) {
+            statusClass = 'bg-red-100 text-red-800';
+            statusText = 'Sem Stock';
+            sem++;
+        } else if (dados.quantidade <= 5) {
+            statusClass = 'bg-yellow-100 text-yellow-800';
+            statusText = 'Stock Baixo';
+            baixo++;
         }
+        
+        const lucroUnitario = dados.preco * 0.3; // Assumindo 30% de margem
+        const lucroTotal = (dados.saidas || 0) * lucroUnitario;
+        
+        html += `
+            <tr>
+                <td class="border border-gray-200 px-4 py-2 font-medium">${nome}</td>
+                <td class="border border-gray-200 px-4 py-2">${dados.quantidade}</td>
+                <td class="border border-gray-200 px-4 py-2">${dados.preco.toFixed(2)} MZN</td>
+                <td class="border border-gray-200 px-4 py-2">${dados.entradas || 0}</td>
+                <td class="border border-gray-200 px-4 py-2">${dados.saidas || 0}</td>
+                <td class="border border-gray-200 px-4 py-2 font-bold text-green-600">${lucroTotal.toFixed(2)} MZN</td>
+                <td class="border border-gray-200 px-4 py-2">
+                    <span class="px-2 py-1 rounded-full text-xs font-medium ${statusClass}">
+                        ${statusText}
+                    </span>
+                </td>
+                <td class="border border-gray-200 px-4 py-2 text-center">
+                    <button onclick="removerProduto('${nome}')" 
+                        class="bg-white text-white px-2 py-1 rounded hover:bg-red-700 text-sm">
+                        ❌
+                    </button>
+                </td>
+            </tr>
+        `;
+    });
+    
+    stockTable.innerHTML = html;
+    totalProdutos.textContent = Object.keys(stock).length;
+    stockBaixo.textContent = baixo;
+    semStock.textContent = sem;
+}
+//função para remover produto do stock
+function removerProduto(nome) {
+    if (confirm(`Tem certeza que deseja remover o produto "${nome}" do stock?`)) {
+        delete stock[nome];
+        saveData();
+        updateStockDisplay();
+        updateIngredienteSelect();
+        updateRelatorios();
+        alert(`Produto "${nome}" removido com sucesso!`);
+    }
+}
+
 
         function updateComprasTable() {
             const comprasTable = document.getElementById('compras-table');
