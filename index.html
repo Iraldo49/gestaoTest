@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Sistema Gestão Take Away</title>
   <!-- Tailwind CSS CDN -->
+  
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-gradient-to-br from-blue-50 to-indigo-100 min-h-screen">
@@ -63,9 +64,7 @@
             <p class="text-2xl font-bold text-red-600" id="sem-stock">0</p>
           </div>
         </div>
-
-        <!-- Table -->
-       <div class="overflow-x-auto">
+<div class="overflow-x-auto">
   <table class="w-full border-collapse text-sm md:text-base">
     <thead>
       <tr class="bg-gray-50">
@@ -81,7 +80,7 @@
     </thead>
 
     <tbody id="stock-table">
-      <!-- Linhas serão geradas pelo JS -->
+      <!-- Linhas geradas pelo JS -->
     </tbody>
   </table>
 </div>
@@ -94,15 +93,19 @@
 </div>
 
 <script>
-  // EXEMPLO DE DADOS – substitui pelos teus
+  // --- EXEMPLO DE DADOS (podes substituir) ---
   const stockData = [
-    { produto: "Item 1", qtd: 10, preco: "100 MZN", entrada: 5, saida: 2, lucro: "300 MZN", status: "OK" },
-    { produto: "Item 2", qtd: 4, preco: "80 MZN", entrada: 1, saida: 1, lucro: "120 MZN", status: "OK" },
-    { produto: "Item 3", qtd: 20, preco: "50 MZN", entrada: 10, saida: 5, lucro: "250 MZN", status: "OK" },
-    // Adiciona mais dados...
+    { produto: "Coca-Cola", qtd: 10, preco: "70 MZN", entrada: 5, saida: 2, lucro: "150 MZN", status: "OK" },
+    { produto: "Fanta", qtd: 6, preco: "60 MZN", entrada: 3, saida: 1, lucro: "80 MZN", status: "OK" },
+    { produto: "Sprite", qtd: 12, preco: "65 MZN", entrada: 4, saida: 2, lucro: "100 MZN", status: "OK" },
+    { produto: "Hambúrguer", qtd: 8, preco: "150 MZN", entrada: 5, saida: 3, lucro: "300 MZN", status: "OK" },
+    { produto: "X-Salada", qtd: 5, preco: "200 MZN", entrada: 2, saida: 1, lucro: "150 MZN", status: "OK" },
+    { produto: "Água", qtd: 20, preco: "30 MZN", entrada: 10, saida: 5, lucro: "250 MZN", status: "OK" },
+    { produto: "Batata Frita", qtd: 7, preco: "100 MZN", entrada: 3, saida: 2, lucro: "150 MZN", status: "OK" },
   ];
 
-  const rowsPerPage = 5;
+  // --- PAGINAÇÃO ---
+  const rowsPerPage = 5;   // MOSTRAR 5 LINHAS POR PÁGINA
   let currentPage = 1;
 
   function renderTable() {
@@ -111,13 +114,14 @@
 
     const start = (currentPage - 1) * rowsPerPage;
     const end = start + rowsPerPage;
+
     const pageRows = stockData.slice(start, end);
 
     if (pageRows.length === 0) {
       tableBody.innerHTML = `
         <tr>
-          <td colspan="8" class="border border-gray-200 px-4 py-8 text-center text-gray-500">
-            Nenhum produto em stock.
+          <td colspan="8" class="border px-4 py-8 text-center text-gray-500">
+            Nenhum produto encontrado.
           </td>
         </tr>
       `;
@@ -159,6 +163,7 @@
     }
   });
 
+  // inicialização
   renderTable();
 </script>
 
